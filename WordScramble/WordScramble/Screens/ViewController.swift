@@ -14,35 +14,53 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") { //acesso o arquivo dentro do projeto
-            if let startWords = try? String(contentsOf: startWordsURL) { //converto pra string o conteudo do arquivo
-                allWords = startWords.components(separatedBy: "\n") //atribuo ao array/lista as palavras separadas por um breakline
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptForAnswer))
+
+        if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            if let startWords = try? String(contentsOf: startWordsURL) {
+                allWords = startWords.components(separatedBy: "\n")
             }
         }
 
         if allWords.isEmpty {
-            allWords = ["silkworm"] //adiciono uma palavra aleatoria
+            allWords = ["silkworm"]
         }
         startGame()
     }
 
     func loadFiles() {
-        if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") { //acesso o arquivo dentro do projeto
-            if let startWords = try? String(contentsOf: startWordsURL) { //converto pra string o conteudo do arquivo
-                allWords = startWords.components(separatedBy: "\n") //atribuo ao array/lista as palavras separadas por um breakline
+        if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            if let startWords = try? String(contentsOf: startWordsURL) {
+                allWords = startWords.components(separatedBy: "\n")
             }
         }
 
         if allWords.isEmpty {
-            allWords = ["silkworm"] //adiciono uma palavra aleatoria
+            allWords = ["silkworm"]
         }
     }
     
     func startGame() {
-        title = allWords.randomElement() //titulo da pagina com uma palavra aleatoria do array
-        usedWords.removeAll(keepingCapacity: true) //remove todos os elementos do array
-        tableView.reloadData() //atualiza os dados da tabela
+        title = allWords.randomElement()
+        usedWords.removeAll(keepingCapacity: true)
+        tableView.reloadData()
+    }
+    
+    @objc func promptForAnswer() {
+        let ac = UIAlertController(title: "Enter answer", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        
+        let submitAction = UIAlertAction(title: "Submit", style: .default) { [weak self, weak ac] action in
+            guard let answer = ac?.textFields?[0].text else { return }
+            self?.submit(answer)
+        }
+        
+        ac.addAction(submitAction)
+        
+        present(ac, animated: true)
+    }
+    
+    func submit(_ answer: String) {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
